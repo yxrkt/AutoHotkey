@@ -149,6 +149,16 @@ return
 SendInput, 4387550003897088
 return
 
+#z::
+;VarSetCapacity(VAR_Directory, 260)
+;DllCall("GetModuleFileName", UInt, 0, Str, VAR_Directory, UInt, 260)
+;MsgBox, %VAR_Directory%
+
+VAR_CommandLine := DllCall("GetCommandLine", "Str")
+RegExMatch(VAR_CommandLine, "i)(\w:\\[^\""]*\\)[^.""]*.ahk", VAR_ScriptDir)
+DllCall(VAR_ScriptDir1 . "PinAssist\MonitorProcesses")
+;MsgBox % VAR_ScriptDir1 . "PinAssist\MonitorProcesses"
+return
 
 
 
