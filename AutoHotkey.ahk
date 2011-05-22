@@ -1,3 +1,5 @@
+; yukisamaomg
+
 ;-------------------------------------------------------------------------------
 ; Alt-Drag
 ;-------------------------------------------------------------------------------
@@ -102,10 +104,38 @@ if VAR_WindowName = StarCraft II
 }
 
 ;-------------------------------------------------------------------------------
-; WinKey+W			Close
+; Window Manipulation
 ;-------------------------------------------------------------------------------
 #W::
 WinClose, A
+return
+
+#C::
+WinGetPos, VAR_X, VAR_Y, VAR_Width, VAR_Height, A
+SysGet, VAR_ScreenRect, MonitorWorkArea, 0
+if (VAR_X - VAR_ScreenRectRight) + (VAR_Width / 2) <= 0
+{
+	WinMove, A,, (VAR_ScreenRectRight - VAR_Width) / 2, (VAR_ScreenRectBottom - VAR_Height) / 2
+}
+else
+{
+	SysGet, VAR_ScreenRect, MonitorWorkArea, 1
+	VAR_X := VAR_ScreenRectLeft + ((VAR_ScreenRectRight - VAR_ScreenRectLeft) - VAR_Width) / 2
+	VAR_Y := VAR_ScreenRectTop + ((VAR_ScreenRectBottom - VAR_ScreenRectTop) - VAR_Height) / 2
+	MsgBox % "{Left: " . VAR_ScreenRectLeft . ", Top: " . VAR_ScreenRectTop . ", Right: " . VAR_ScreenRectRight . ", Bottom: " . VAR_ScreenRectBottom . "}"
+	;WinMove, A,, VAR_X, VAR_Y
+}
+return
+
+#A::
+WinGetPos, VAR_X, VAR_Y, VAR_Width, , A
+SysGet, VAR_ScreenRect, MonitorWorkArea, 0
+if (VAR_X - VAR_ScreenRectRight) + (VAR_Width / 2) <= 0
+	VAR_Monitor := 0
+else
+	VAR_Monitor := 1
+MsgBox % "Monitor: " . VAR_Monitor
+;MsgBox % "{X: " . VAR_X . ", Y: " . VAR_Y . "}"
 return
 
 ;-------------------------------------------------------------------------------
