@@ -34,7 +34,7 @@ return
 
 #,::
 window := DllCall("GetForegroundWindow")
-GetOuterWindowRect(window, frameX, frameY, frameWidth, frameHeight)
+GetFrameWindowRect(window, frameX, frameY, frameWidth, frameHeight)
 WinGetPos, windowX, windowY, windowWidth, windowHeight, A
 newX := windowX - frameX
 newY := windowY - frameY
@@ -50,7 +50,7 @@ return
 
 #.::
 window := DllCall("GetForegroundWindow")
-GetOuterWindowRect(window, frameX, frameY, frameWidth, frameHeight)
+GetFrameWindowRect(window, frameX, frameY, frameWidth, frameHeight)
 WinGetPos, windowX, windowY, windowWidth, windowHeight, A
 newX := paneWidth + (windowX - frameX)
 newY := windowY - frameY
@@ -105,7 +105,7 @@ GetMonitorFromRect(x, y, width, height)
 	return DllCall("MonitorFromRect", "Ptr", &rect, "UInt", 2) ; 2 - Default to nearest monitor
 }
 
-GetOuterWindowRect(window, ByRef x, ByRef y, ByRef width, ByRef height)
+GetFrameWindowRect(window, ByRef x, ByRef y, ByRef width, ByRef height)
 {
 	VarSetCapacity(rect, 16)
 	DllCall("dwmapi\DwmGetWindowAttribute", "Ptr", window, "UInt", 9, "Ptr", &rect, "UInt", 16)
