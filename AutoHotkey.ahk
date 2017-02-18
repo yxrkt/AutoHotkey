@@ -36,12 +36,13 @@ return
 window := DllCall("GetForegroundWindow")
 GetFrameWindowRect(window, frameX, frameY, frameWidth, frameHeight)
 WinGetPos, windowX, windowY, windowWidth, windowHeight, A
-newX := windowX - frameX
-newY := windowY - frameY
-newWidth := paneWidth + (windowWidth - frameWidth)
 
-monitor := GetMonitorFromRect(frameX, frameY, frameWidth, frameHeight)
-GetMonitorWorkSize(monitor, workWidth, workHeight)
+monitor := DllCall("MonitorFromWindow", "Ptr", window, "UInt", 0)
+GetMonitorWorkRect(monitor, workX, workY, workWidth, workHeight)
+
+newX := workX + windowX - frameX
+newY := workY + windowY - frameY
+newWidth := paneWidth + (windowWidth - frameWidth)
 newHeight := workHeight + (windowHeight - frameHeight)
 
 WinRestore, A
@@ -52,16 +53,29 @@ return
 window := DllCall("GetForegroundWindow")
 GetFrameWindowRect(window, frameX, frameY, frameWidth, frameHeight)
 WinGetPos, windowX, windowY, windowWidth, windowHeight, A
-newX := paneWidth + (windowX - frameX)
-newY := windowY - frameY
 
-monitor := GetMonitorFromRect(frameX, frameY, frameWidth, frameHeight)
-GetMonitorWorkSize(monitor, workWidth, workHeight)
+monitor := DllCall("MonitorFromWindow", "Ptr", window, "UInt", 0)
+GetMonitorWorkRect(monitor, workX, workY, workWidth, workHeight)
+
+newX := workX + paneWidth + (windowX - frameX)
+newY := workY + windowY - frameY
 newWidth := workWidth - paneWidth + (windowWidth - frameWidth)
 newHeight := workHeight + (windowHeight - frameHeight)
 
 WinRestore, A
 WinMove, A, , newX, newY, newWidth, newHeight
+return
+
+#z::
+;  VarSetCapacity(point, 8)
+;  NumPut(4000, point, 0, "Int")
+;  NumPut(100, point, 4, "Int")
+;  monitor := DllCall("MonitorFromPoint", "Ptr", point, "UInt", 0)
+
+window := DllCall("GetForegroundWindow")
+monitor := DllCall("MonitorFromWindow", "Ptr", window, "UInt", 0)
+
+MsgBox % monitor
 return
 
 ;
@@ -78,7 +92,7 @@ PasteText(text)
 	VarSetCapacity(originalClipboard, 0)
 }
 
-GetMonitorWorkSize(monitor, ByRef width, ByRef height)
+GetMonitorWorkRect(monitor, ByRef x, ByRef y, ByRef width, ByRef height)
 {
 	VarSetCapacity(monitorInfo, 40)
 	NumPut(40, monitorInfo, 0, "UInt")
@@ -90,19 +104,10 @@ GetMonitorWorkSize(monitor, ByRef width, ByRef height)
 	right := NumGet(monitorInfo, 28, "Int")
 	bottom := NumGet(monitorInfo, 32, "Int")
 
+	x := left
+	y := top
 	width := right - left
 	height := bottom - top
-}
-
-GetMonitorFromRect(x, y, width, height)
-{
-	VarSetCapacity(rect, 16)
-	NumPut(x, rect, 0, "Int")
-	NumPut(y, rect, 4, "Int")
-	NumPut(x + width, rect, 8, "Int")
-	NumPut(y + height, rect, 12, "Int")
-
-	return DllCall("MonitorFromRect", "Ptr", &rect, "UInt", 2) ; 2 - Default to nearest monitor
 }
 
 GetFrameWindowRect(window, ByRef x, ByRef y, ByRef width, ByRef height)
